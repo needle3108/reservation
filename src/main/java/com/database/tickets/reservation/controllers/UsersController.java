@@ -18,8 +18,22 @@ public class UsersController {
     private UserRepository userRepository;
 
     @GetMapping("/index")
-    public String home(){
-        return "/index";
+    public String home(HttpSession session){
+        try{
+            var username = session.getAttribute("username").toString();
+
+            if(username.equals("admin")){
+                return "/logAdmin";
+            }
+
+            else{
+                return "/logUser";
+            }
+        }
+        catch(NullPointerException e){
+            return "/index";
+        }
+
     }
     @GetMapping("/register")
     public String register(){
@@ -63,6 +77,12 @@ public class UsersController {
             return "/login";
         }
 
+        if(candidate.getEmail().equals("admin")){
+            session.setAttribute("username", candidate.getUsername());
+            response.setStatus(201);
+            return "/logAdmin";
+        }
+
         session.setAttribute("username", candidate.getUsername());
         response.setStatus(201);
         return "/logUser";
@@ -71,6 +91,6 @@ public class UsersController {
     @GetMapping("/logout")
     public String logout(HttpSession session){
         session.invalidate();
-        return "/index";
+        return "/logout";
     }
 }

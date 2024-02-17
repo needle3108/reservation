@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"
+xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<a href="/index">Home Page</a>
+<a href="/addPlane">Add plane</a>
+<a href="/logout">Log out</a>
+<table>
+    <thead>
+    <tr>
+        <th>Plane Name</th>
+        <th>Economic class</th>
+        <th>Business class</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="plane: ${planes}">
+        <td th:text="${plane.getPlaneName()}"></td>
+        <td th:text="${plane.getSeatsEconomic()}"></td>
+        <td th:text="${plane.getSeatsBussines()}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

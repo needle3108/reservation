@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<nav>
+    <a href="/index">Home Page</a>
+</nav>
+<br /><br /><br />
+<div>
+    <h2 class="text-center">Add plane to database</h2>
+    <form method="post" action="/addPlane/save">
+        Name: <input id="planeName" name="planeName" placeholder="Enter plane`s name" type="text"/>
+        Number of seats in economic class: <input id="seatsEconomic" name="seatsEconomic" placeholder="Enter number of seats" type="text"/>
+        Number of seats in business class: <input id="seatsBusiness" name="seatsBusiness" placeholder="Enter number of seats" type="text"/>
+        <button type="submit">Add plane</button>
+    </form>
+</div>
+</body>
+</html>
