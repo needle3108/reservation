@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<nav>
+    <a href="/index">Home Page</a>
+</nav>
+<br /><br /><br />
+<div>
+    <h2 class="text-center">Business class</h2>
+    <form method="post" action="/buyBusiness/make">
+        Available seats in business class: <select name="seat" id="seat">
+        <option th:each="seat : ${seats}" th:value="${seat}" th:text="${seat}"></option>
+    </select>
+        <button type="submit">Make a reservation</button>
+    </form>
+</div>
+</body>
+</html>

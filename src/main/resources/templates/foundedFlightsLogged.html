@@ -30,7 +30,8 @@
         <td th:text="${flight.getDepartureTime()}"></td>
         <td th:text="${flight.getArrivalDate()}"></td>
         <td th:text="${flight.getArrivalTime()}"></td>
-        <td><a href="/buyTickets">Buy tickets</a> </td>
+        <td><a th:href="@{/buyEconomic(id = ${flight.getIdFlight()})}">Economic class</a> </td>
+        <td><a th:href="@{/buyBusiness(id = ${flight.getIdFlight()})}">Business class</a> </td>
     </tr>
     </tbody>
 </table>

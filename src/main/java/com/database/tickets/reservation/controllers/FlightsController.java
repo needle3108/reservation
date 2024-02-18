@@ -163,9 +163,4 @@ public class FlightsController {
     public String searchDateLogged(){
         return "/searchDateLogged";
     }
-
-    @GetMapping("/buyTickets")
-    public String buyTickets(){
-        return "/buyTickets";
-    }
 }

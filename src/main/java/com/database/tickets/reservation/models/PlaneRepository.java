@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PlaneRepository extends JpaRepository<Plane, Integer>{
     Plane findByPlaneName(String planeName);
+    Plane findPlaneByIdPlane(int idPlane);
 }
