@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<a href="/index">Home Page</a>
+<a href="/addFlight">Add flight</a>
+<a href="/logout">Log out</a>
+<table>
+    <thead>
+    <tr>
+        <th>Plane Id</th>
+        <th>Departure Airport</th>
+        <th>Departure Date</th>
+        <th>Departure Time</th>
+        <th>Arrival Airport</th>
+        <th>Arrival Date</th>
+        <th>Arrival Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="flight: ${flights}">
+        <td th:text="${flight.getIdPlane()}"></td>
+        <td th:text="${flight.getDepartureAirport()}"></td>
+        <td th:text="${flight.getDepartureDate()}"></td>
+        <td th:text="${flight.getDepartureTime()}"></td>
+        <td th:text="${flight.getArrivalAirport()}"></td>
+        <td th:text="${flight.getArrivalDate()}"></td>
+        <td th:text="${flight.getArrivalTime()}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

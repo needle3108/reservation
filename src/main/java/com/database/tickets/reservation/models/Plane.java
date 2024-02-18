@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 @Entity
 @Table(name="planes")
 public class Plane {
@@ -11,17 +12,14 @@ public class Plane {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idPlane;
 
-    @Getter
     @Setter
     @Column(nullable = false, unique = true)
     private String planeName;
 
-    @Getter
     @Setter
     @Column(nullable = false)
     private int seatsEconomic;
 
-    @Getter
     @Setter
     @Column(nullable = false)
     private int seatsBussines;

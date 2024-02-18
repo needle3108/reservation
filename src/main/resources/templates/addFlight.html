@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">>
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<nav>
+    <a href="/index">Home Page</a>
+</nav>
+<br /><br /><br />
+<div>
+    <h2 class="text-center">Add flight to database</h2>
+    <form method="post" action="/addFlight/save">
+        Plane: <select name="idPlane" id="idPlane">
+        <option th:each="plane : ${planes}" th:value="${plane.getIdPlane()}" th:text="${plane.getPlaneName()}"></option>
+        </select>
+
+        Departure year: <select name="departureYear" id="departureYear">
+            <option th:each="i : ${#numbers.sequence(2024,2026)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Departure month: <select name="departureMonth" id="departureMonth">
+            <option th:each="i : ${#numbers.sequence(1,12)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Departure day: <select name="departureDay" id="departureDay">
+        <option th:each="i : ${#numbers.sequence(1,31)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Departure hour: <select name="departureHour" id="departureHour">
+        <option th:each="i : ${#numbers.sequence(0,23)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Departure minutes: <select name="departureMinutes" id="departureMinutes">
+        <option th:each="i : ${#numbers.sequence(0,59)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+
+        Arrival year: <select name="arrivalYear" id="arrivalYear">
+        <option th:each="i : ${#numbers.sequence(2024,2026)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Arrival month: <select name="arrivalMonth" id="arrivalMonth">
+        <option th:each="i : ${#numbers.sequence(1,12)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Arrival day: <select name="arrivalDay" id="arrivalDay">
+        <option th:each="i : ${#numbers.sequence(1,31)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Arrival hour: <select name="arrivalHour" id="arrivalHour">
+        <option th:each="i : ${#numbers.sequence(0,23)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+        Arrival minutes: <select name="arrivalMinutes" id="arrivalMinutes">
+        <option th:each="i : ${#numbers.sequence(0,59)}" th:value="${i}" th:text="${i}"></option>
+        </select>
+
+        Departure airport: <select name="departureAirport" id="departureAirport">
+        <option th:each="airport : ${airports}" th:value="${airport.getIdAirport()}" th:text="${airport.getName()}"></option>
+        </select>
+
+        Arrival airport: <select name="arrivalAirport" id="arrivalAirport">
+        <option th:each="airport : ${airports}" th:value="${airport.getIdAirport()}" th:text="${airport.getName()}"></option>
+        </select>
+        <button type="submit">Add flight</button>
+    </form>
+</div>
+</body>
+</html>

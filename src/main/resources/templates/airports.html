@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<a href="/index">Home Page</a>
+<a href="/addAirport">Add airport</a>
+<a href="/logout">Log out</a>
+<table>
+    <thead>
+    <tr>
+        <th>Airport index</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="airport: ${airports}">
+        <td th:text="${airport.getIdAirport()}"></td>
+        <td th:text="${airport.getName()}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
