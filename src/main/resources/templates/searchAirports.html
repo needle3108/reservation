@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<nav>
+    <a href="/index">Home Page</a>
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+</nav>
+<br /><br /><br />
+<div>
+    <h2 class="text-center">Search for your flight</h2>
+    <form method="post" action="/searchAirport/search">
+        From: <select name="departureAirport" id="departureAirport">
+            <option th:each="airport : ${airports}" th:value="${airport.getIdAirport()}" th:text="${airport.getName()}"></option>
+        </select>
+        To: <select name="arrivalAirport" id="arrivalAirport">
+            <option th:each="airport : ${airports}" th:value="${airport.getIdAirport()}" th:text="${airport.getName()}"></option>
+        </select>
+        <button type="submit">Search</button>
+    </form>
+</div>
+</body>
+</html>

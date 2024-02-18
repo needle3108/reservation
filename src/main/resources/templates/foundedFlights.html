@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Reservation System</title>
+</head>
+<body>
+<nav>
+<a href="/index">Home Page</a>
+<a href="/login">Sign in</a>
+<a href="/register">Sign up</a>
+</nav>
+<h2>To buy tickets you must have registered account and be signed in</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Departure Airport</th>
+    <th>Arrival Airport</th>
+    <th>Departure Date</th>
+    <th>Departure Time</th>
+    <th>Arrival Date</th>
+    <th>Arrival Time</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="flight: ${flights}" th:with="i = ${flightStat.index*2}">
+    <td th:text="${names[i]}"></td>
+    <td th:text="${names[i + 1]}"></td>
+    <td th:text="${flight.getDepartureDate()}"></td>
+    <td th:text="${flight.getDepartureTime()}"></td>
+    <td th:text="${flight.getArrivalDate()}"></td>
+    <td th:text="${flight.getArrivalTime()}"></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

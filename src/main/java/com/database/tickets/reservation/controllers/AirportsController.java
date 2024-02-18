@@ -45,4 +45,16 @@ public class AirportsController {
         response.setStatus(201);
         return "/addedAirport";
     }
+
+    @GetMapping("/searchAirports")
+    public String searchAirport(Model model){
+        model.addAttribute("airports", airportRepository.findAll());
+        return "/searchAirports";
+    }
+
+    @GetMapping("/searchAirportsLogged")
+    public String searchAirportLogged(Model model){
+        model.addAttribute("airports", airportRepository.findAll());
+        return "/searchAirportsLogged";
+    }
 }
