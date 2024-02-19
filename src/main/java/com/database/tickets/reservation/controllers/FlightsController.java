@@ -26,20 +26,57 @@ public class FlightsController {
     private AirportRepository airportRepository;
 
     @GetMapping("/flights")
-    public String flights(Model model){
+    public String flights(Model model, HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
+        }
+        else{
+            return "/index";
+        }
         model.addAttribute("flights", flightRepository.findAll());
-        return "/flights";
+        return "/admin/flights";
     }
 
     @GetMapping("/addFlight")
-    public String addFlight(Model model){
+    public String addFlight(Model model, HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
+        }
+        else{
+            return "/index";
+        }
         model.addAttribute("planes", planeRepository.findAll());
         model.addAttribute("airports", airportRepository.findAll());
-        return "/addFlight";
+        return "/admin/addFlight";
+    }
+
+    @GetMapping("/searchDateLogged")
+    public String searchDateLogged(HttpSession session){
+        if(!isUserLogged(session)){ return "/index"; }
+
+        return "/user/searchDateLogged";
+    }
+
+    @GetMapping("/searchDate")
+    public String searchDate(){
+        return "/searchDate";
     }
 
     @PostMapping("/addFlight/save")
-    public String addPlane(@RequestParam Map<String, String> newFlight, HttpServletResponse response){
+    public String addPlane(@RequestParam Map<String, String> newFlight, HttpServletResponse response, HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
+        }
+        else{
+            return "/index";
+        }
+
         int newIdPlane = Integer.parseInt(newFlight.get("idPlane"));
 
         int departureYear = Integer.parseInt(newFlight.get("departureYear"));
@@ -69,7 +106,7 @@ public class FlightsController {
         flightRepository.save(new Flight(newIdPlane, newDepartureDate, newArrivalDate,
                 newDepartureTime, newArrivalTime, newDepartureAirport, newArrivalAirport));
         response.setStatus(201);
-        return "/addedFlight";
+        return "/admin/addedFlight";
     }
 
     @PostMapping("/searchAirport/search")
@@ -81,22 +118,50 @@ public class FlightsController {
         List<Flight> flights = new ArrayList<>(flightRepository.findByDepartureAirportAndArrivalAirport(departureAirport,
                 arrivalAirport));
 
-        List<Airport> airports = getAllAirports();
+        getModel(flights, model);
 
-        List<String> airportsNames = getAirports(flights, airports);
-
-        model.addAttribute("flights", flights);
-        model.addAttribute("names", airportsNames);
-
-        try{
-            session.getAttribute("username");
+        if(isUserLogged(session)){
             response.setStatus(201);
-            return "/foundedFlightsLogged";
+            return "/user/foundedFlightsLogged";
         }
-        catch(NullPointerException e){
+        else{
             response.setStatus(201);
             return "/foundedFlights";
         }
+    }
+
+    @PostMapping("/searchDate/search")
+    public String searchDateResult(@RequestParam Map<String, String> newFlight, HttpServletResponse response, Model model,
+                                   HttpSession session){
+        int departureYear = Integer.parseInt(newFlight.get("departureYear"));
+        int departureMonth = Integer.parseInt(newFlight.get("departureMonth"));
+        int departureDay = Integer.parseInt(newFlight.get("departureDay"));
+        LocalDate newDepartureDate = LocalDate.of(departureYear,
+                departureMonth,departureDay);
+
+        List<Flight> flights = new ArrayList<>(flightRepository.findByDepartureDate(newDepartureDate));
+
+        getModel(flights, model);
+
+        if(isUserLogged(session)){
+            response.setStatus(201);
+            return "/user/foundedFlightsLogged";
+        }
+        else{
+            response.setStatus(201);
+            return "/foundedFlights";
+        }
+    }
+
+    private List<Airport> getAllAirports(){
+        return airportRepository.findAll();
+    }
+
+    private void getModel(List<Flight> flights, Model model){
+        List<Airport> airports = getAllAirports();
+
+        model.addAttribute("flights", flights);
+        model.addAttribute("names", getAirports(flights, airports));
     }
 
     private static List<String> getAirports(List<Flight> flights, List<Airport> airports) {
@@ -121,46 +186,13 @@ public class FlightsController {
         return airportsNames;
     }
 
-    @GetMapping("/searchDate")
-    public String searchDate(){
-        return "/searchDate";
-    }
-
-    @PostMapping("/searchDate/search")
-    public String searchDateResult(@RequestParam Map<String, String> newFlight, HttpServletResponse response, Model model,
-                                   HttpSession session){
-        int departureYear = Integer.parseInt(newFlight.get("departureYear"));
-        int departureMonth = Integer.parseInt(newFlight.get("departureMonth"));
-        int departureDay = Integer.parseInt(newFlight.get("departureDay"));
-        LocalDate newDepartureDate = LocalDate.of(departureYear,
-                departureMonth,departureDay);
-
-        List<Flight> flights = new ArrayList<>(flightRepository.findByDepartureDate(newDepartureDate));
-
-        List<Airport> airports = getAllAirports();
-
-        List<String> airportsNames = getAirports(flights, airports);
-
-        model.addAttribute("flights", flights);
-        model.addAttribute("names", airportsNames);
-
+    private boolean isUserLogged(HttpSession session){
         try{
-           session.getAttribute("username");
-           response.setStatus(201);
-           return "/foundedFlightsLogged";
+            String isLogged = session.getAttribute("username").toString();
+            return true;
         }
         catch(NullPointerException e){
-            response.setStatus(201);
-            return "/foundedFlights";
+            return false;
         }
-    }
-
-    private List<Airport> getAllAirports(){
-        return airportRepository.findAll();
-    }
-
-    @GetMapping("/searchDateLogged")
-    public String searchDateLogged(){
-        return "/searchDateLogged";
     }
 }

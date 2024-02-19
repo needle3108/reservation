@@ -28,80 +28,64 @@ public class ReservationController {
     private AirportRepository airportRepository;
 
     @RequestMapping(value="buyEconomic", method = RequestMethod.GET)
-    public String buyEconomic(@RequestParam("id") int id, Model model){
+    public String buyEconomic(@RequestParam("id") int id, Model model, HttpSession session){
+        if(!isUserLogged(session)){ return "/index"; }
+
         List<Integer> availableSeats = getSeats("economic", id);
 
         model.addAttribute("seats", availableSeats);
         model.addAttribute("idFlight", id);
 
-        return "/buyEconomic";
+        return "/user/buyEconomic";
     }
 
     @RequestMapping(value="buyBusiness", method = RequestMethod.GET)
-    public String buyBusiness(@RequestParam("id") int id, Model model){
+    public String buyBusiness(@RequestParam("id") int id, Model model, HttpSession session){
+        if(!isUserLogged(session)){ return "/index"; }
+
         List<Integer> availableSeats = getSeats("business", id);
 
         model.addAttribute("seats", availableSeats);
         model.addAttribute("idFlight", id);
 
-        return "/buyBusiness";
+        return "/user/buyBusiness";
     }
 
-    private List<Integer> getSeats(String seatsClass, int id){
-        Flight flight = flightRepository.findFlightByIdFlight(id);
-        int idPlane = flight.getIdPlane();
-        int numberSeats;
-
-        Plane plane = planeRepository.findPlaneByIdPlane(idPlane);
-        if(seatsClass.equals("economic")){
-            numberSeats = plane.getSeatsEconomic();
+    @RequestMapping(value="seeReservations", method = RequestMethod.GET)
+    public String seeReservations(@RequestParam("id") int id, Model model, HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
         }
         else{
-            numberSeats = plane.getSeatsBussines();
+            return "/index";
         }
 
+        List<Reservation> reservations = reservationRepository.findAllByIdFlight(id);
+
+        List<String> usernames = new ArrayList<>();
         List<Integer> seats = new ArrayList<>();
-        List<Reservation> reservations = reservationRepository.findAllByIdFlightAndSeatClass(id, seatsClass);
+        List<String> seatsClass = new ArrayList<>();
 
-        for(int i = 1; i <= numberSeats; i++){
-            boolean isTaken = false;
-            for(Reservation reservation : reservations){
-                if(reservation.getSeatNumber() == i){ isTaken = true; break;}
-            }
-            if(!isTaken){seats.add(i);}
+        for(Reservation reservation : reservations){
+            User user = userRepository.findUserById(reservation.getIdUser());
+            usernames.add(user.getUsername());
+            seats.add(reservation.getSeatNumber());
+            seatsClass.add(reservation.getSeatClass());
         }
 
-        return seats;
-    }
+        model.addAttribute("users", usernames);
+        model.addAttribute("seats", seats);
+        model.addAttribute("seatsClass", seatsClass);
 
-    @RequestMapping(value="buyEconomic/make", method = RequestMethod.POST)
-    public String buyEconomicMake(@RequestParam Map<String,String> seat, @RequestParam("id") int id,
-                                  HttpServletResponse response,  HttpSession session){
-        int chosenSeat = Integer.parseInt(seat.get("seat"));
-
-        User currentUser = userRepository.findUserByUsername(session.getAttribute("username").toString());
-
-        reservationRepository.save(new Reservation(currentUser.getId(), id, chosenSeat, "economic"));
-        response.setStatus(201);
-
-        return "/success";
-    }
-
-    @RequestMapping(value="buyBusiness/make", method = RequestMethod.POST)
-    public String buyBusinessMake(@RequestParam Map<String,String> seat, @RequestParam("id") int id,
-                                  HttpServletResponse response,  HttpSession session){
-        int chosenSeat = Integer.parseInt(seat.get("seat"));
-
-        User currentUser = userRepository.findUserByUsername(session.getAttribute("username").toString());
-
-        reservationRepository.save(new Reservation(currentUser.getId(), id, chosenSeat, "business"));
-        response.setStatus(201);
-
-        return "/success";
+        return "/admin/seeReservations";
     }
 
     @GetMapping("/userProfile")
     public String userProfile(HttpSession session, Model model){
+        if(!isUserLogged(session)){ return "/index"; }
+
         User currentUser = userRepository.findUserByUsername(session.getAttribute("username").toString());
         List<Reservation> userReservations = reservationRepository.findAllByIdUser(currentUser.getId());
 
@@ -146,28 +130,73 @@ public class ReservationController {
         model.addAttribute("seats", seats);
         model.addAttribute("seatClasses", seatsClasses);
 
-        return "/userProfile";
+        return "/user/userProfile";
     }
 
-    @RequestMapping(value="seeReservations", method = RequestMethod.GET)
-    public String seeReservations(@RequestParam("id") int id, Model model){
-        List<Reservation> reservations = reservationRepository.findAllByIdFlight(id);
+    @RequestMapping(value="buyEconomic/make", method = RequestMethod.POST)
+    public String buyEconomicMake(@RequestParam Map<String,String> seat, @RequestParam("id") int id,
+                                  HttpServletResponse response,  HttpSession session){
+        if(!isUserLogged(session)){ return "/index"; }
 
-        List<String> usernames = new ArrayList<>();
-        List<Integer> seats = new ArrayList<>();
-        List<String> seatsClass = new ArrayList<>();
+        int chosenSeat = Integer.parseInt(seat.get("seat"));
 
-        for(Reservation reservation : reservations){
-            User user = userRepository.findUserById(reservation.getIdUser());
-            usernames.add(user.getUsername());
-            seats.add(reservation.getSeatNumber());
-            seatsClass.add(reservation.getSeatClass());
+        User currentUser = userRepository.findUserByUsername(session.getAttribute("username").toString());
+
+        reservationRepository.save(new Reservation(currentUser.getId(), id, chosenSeat, "economic"));
+        response.setStatus(201);
+
+        return "/user/success";
+    }
+
+    @RequestMapping(value="buyBusiness/make", method = RequestMethod.POST)
+    public String buyBusinessMake(@RequestParam Map<String,String> seat, @RequestParam("id") int id,
+                                  HttpServletResponse response,  HttpSession session){
+        if(!isUserLogged(session)){ return "/index"; }
+
+        int chosenSeat = Integer.parseInt(seat.get("seat"));
+
+        User currentUser = userRepository.findUserByUsername(session.getAttribute("username").toString());
+
+        reservationRepository.save(new Reservation(currentUser.getId(), id, chosenSeat, "business"));
+        response.setStatus(201);
+
+        return "/user/success";
+    }
+
+    private List<Integer> getSeats(String seatsClass, int id){
+        Flight flight = flightRepository.findFlightByIdFlight(id);
+        int idPlane = flight.getIdPlane();
+        int numberSeats;
+
+        Plane plane = planeRepository.findPlaneByIdPlane(idPlane);
+        if(seatsClass.equals("economic")){
+            numberSeats = plane.getSeatsEconomic();
+        }
+        else{
+            numberSeats = plane.getSeatsBussines();
         }
 
-        model.addAttribute("users", usernames);
-        model.addAttribute("seats", seats);
-        model.addAttribute("seatsClass", seatsClass);
+        List<Integer> seats = new ArrayList<>();
+        List<Reservation> reservations = reservationRepository.findAllByIdFlightAndSeatClass(id, seatsClass);
 
-        return "/seeReservations";
+        for(int i = 1; i <= numberSeats; i++){
+            boolean isTaken = false;
+            for(Reservation reservation : reservations){
+                if(reservation.getSeatNumber() == i){ isTaken = true; break;}
+            }
+            if(!isTaken){seats.add(i);}
+        }
+
+        return seats;
+    }
+
+    private boolean isUserLogged(HttpSession session){
+        try{
+            String isLogged = session.getAttribute("username").toString();
+            return true;
+        }
+        catch(NullPointerException e){
+            return false;
+        }
     }
 }

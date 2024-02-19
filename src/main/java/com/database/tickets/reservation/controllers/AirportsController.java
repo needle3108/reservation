@@ -3,6 +3,7 @@ package com.database.tickets.reservation.controllers;
 import com.database.tickets.reservation.models.Airport;
 import com.database.tickets.reservation.models.AirportRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,32 +19,31 @@ public class AirportsController {
     private AirportRepository airportRepository;
 
     @GetMapping("/airports")
-    public String airports(Model model){
+    public String airports(Model model, HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
+        }
+        else{
+            return "/index";
+        }
         model.addAttribute("airports", airportRepository.findAll());
-        return "/airports";
+        return "/admin/airports";
     }
 
     @GetMapping("addAirport")
-    public String addAirport(){
-        return "/addAirport";
-    }
-
-    @PostMapping("/addAirport/save")
-    public String addPlane(@RequestParam Map<String, String> newAirport, HttpServletResponse response){
-        System.out.println("ADD airport");
-
-        String newAirportName = newAirport.get("name");
-
-        Airport existingAirport = airportRepository.findByName(newAirportName);
-
-        if(existingAirport != null){
-            response.setStatus(401);
-            return "/addAirport";
+    public String addAirport(HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
+        }
+        else{
+            return "/index";
         }
 
-        airportRepository.save(new Airport(newAirportName));
-        response.setStatus(201);
-        return "/addedAirport";
+        return "/admin/addAirport";
     }
 
     @GetMapping("/searchAirports")
@@ -53,8 +53,45 @@ public class AirportsController {
     }
 
     @GetMapping("/searchAirportsLogged")
-    public String searchAirportLogged(Model model){
+    public String searchAirportLogged(Model model, HttpSession session){
+        if(!isUserLogged(session)){ return "/index"; }
+
         model.addAttribute("airports", airportRepository.findAll());
-        return "/searchAirportsLogged";
+        return "/user/searchAirportsLogged";
+    }
+
+    @PostMapping("/addAirport/save")
+    public String addPlane(@RequestParam Map<String, String> newAirport, HttpServletResponse response, HttpSession session){
+        if(isUserLogged(session)){
+            if(!session.getAttribute("username").equals("admin")){
+                return "/index";
+            }
+        }
+        else{
+            return "/index";
+        }
+
+        String newAirportName = newAirport.get("name");
+
+        Airport existingAirport = airportRepository.findByName(newAirportName);
+
+        if(existingAirport != null){
+            response.setStatus(401);
+            return "/admin/addAirport";
+        }
+
+        airportRepository.save(new Airport(newAirportName));
+        response.setStatus(201);
+        return "/admin/addedAirport";
+    }
+
+    private boolean isUserLogged(HttpSession session){
+        try{
+            String isLogged = session.getAttribute("username").toString();
+            return true;
+        }
+        catch(NullPointerException e){
+            return false;
+        }
     }
 }
