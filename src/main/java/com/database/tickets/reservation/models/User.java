@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 @Entity
 @Table(name="users")
 public class User {
@@ -11,15 +12,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Setter
-    @Getter
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
     @Setter
-    @Getter
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Getter
     @Setter
     @Column(nullable = false)
     private String password;

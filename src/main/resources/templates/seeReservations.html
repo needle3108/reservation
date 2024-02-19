@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<nav>
+    <a href="/index">Home Page</a>
+    <a href="/logout">Log out</a>
+</nav>
+<h2>Reservations made for this flight</h2>
+<table>
+    <thead>
+    <tr>
+        <th>User</th>
+        <th>Seat number</th>
+        <th>Class</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user: ${users}" th:with="i = ${userStat.index}">
+        <td th:text="${user}"></td>
+        <td th:text="${seats[i]}"></td>
+        <td th:text="${seatsClass[i]}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

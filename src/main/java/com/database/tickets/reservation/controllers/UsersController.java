@@ -1,22 +1,25 @@
 package com.database.tickets.reservation.controllers;
 
+import com.database.tickets.reservation.models.Reservation;
+import com.database.tickets.reservation.models.ReservationRepository;
 import com.database.tickets.reservation.models.User;
 import com.database.tickets.reservation.models.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
 public class UsersController {
     @Autowired
     private UserRepository userRepository;
-
     @GetMapping("/index")
     public String home(HttpSession session){
         try{

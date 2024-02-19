@@ -12,7 +12,7 @@
 <br /><br /><br />
 <div>
     <h2 class="text-center">Business class</h2>
-    <form method="post" action="/buyBusiness/make">
+    <form method="post" th:action="@{/buyBusiness/make(id = ${idFlight})}">
         Available seats in business class: <select name="seat" id="seat">
         <option th:each="seat : ${seats}" th:value="${seat}" th:text="${seat}"></option>
     </select>

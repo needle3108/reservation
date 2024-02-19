@@ -30,6 +30,7 @@
         <td th:text="${flight.getArrivalAirport()}"></td>
         <td th:text="${flight.getArrivalDate()}"></td>
         <td th:text="${flight.getArrivalTime()}"></td>
+        <td><a th:href="@{/seeReservations(id = ${flight.getIdFlight()})}">See reservations</a> </td>
     </tr>
     </tbody>
 </table>

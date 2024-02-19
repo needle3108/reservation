@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
     List<Reservation> findAllByIdFlightAndSeatClass(int idFlight, String seatClass);
+    List<Reservation> findAllByIdUser(int idUser);
+    List<Reservation> findAllByIdFlight(int idFlight);
 }

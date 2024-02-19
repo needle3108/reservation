@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation System</title>
+</head>
+<body>
+<nav>
+    <a href="/index">Home Page</a>
+    <a href="/logout">Log out</a>
+</nav>
+<h2>Your profile</h2>
+<table>
+    <thead>
+    <tr>
+        <th>From</th>
+        <th>Departure Date</th>
+        <th>Departure time</th>
+        <th>To</th>
+        <th>Arrival Date</th>
+        <th>Arrival Time</th>
+        <th>Seats`s number</th>
+        <th>Seats`s class</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="departureAirport: ${departureAirports}" th:with="i = ${departureAirportStat.index}">
+        <td th:text="${departureAirport}"></td>
+        <td th:text="${departureDates[i]}"></td>
+        <td th:text="${departureTimes[i]}"></td>
+        <td th:text="${arrivalAirports[i]}"></td>
+        <td th:text="${arrivalDates[i]}"></td>
+        <td th:text="${arrivalTimes[i]}"></td>
+        <td th:text="${seats[i]}"></td>
+        <td th:text="${seatClasses[i]}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
